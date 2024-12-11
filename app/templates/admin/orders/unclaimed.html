@@ -1,0 +1,10 @@
+{% extends "admin/orders/list_base.html" %}
+
+{% block row_actions %}
+<div class="flex space-x-2">
+    <a href="{{ url_for('main.edit_order', order_id=order.id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+    <button onclick="showDeleteModal({{ order.id }})" class="text-red-600 hover:text-red-900">Delete</button>
+    <button onclick="showReassignModal({{ order.id }})" class="text-green-600 hover:text-green-900">Reassign</button>
+    <button onclick="showDeadlineModal({{ order.id }})" class="text-yellow-600 hover:text-yellow-900">Extend Deadline</button>
+</div>
+{% endblock %}

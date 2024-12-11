@@ -1,0 +1,96 @@
+{% extends "admin/orders/list_base.html" %}
+
+{% block action_buttons %}
+<div class="flex space-x-4">
+    <a href="{{ url_for('main.export_invoice_csv') }}" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">Export to CSV</a>
+    <button onclick="confirmMarkAllPaid()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Mark All as Paid</button>
+</div>
+{% endblock %}
+
+{% block table_headers %}
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Writer</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unpaid Orders</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
+<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+<div class="bg-white shadow rounded-lg p-4 mt-6">
+    <p class="text-lg font-semibold">Total Amount Due: ${{ "%.2f"|format(total_amount) }}</p>
+</div>
+{% endblock %}
+
+{% block table_row %}
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ writer.name }}</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+    {{ writer.email }}<br>
+    <span class="text-xs text-gray-400">{{ writer.phone }}</span>
+</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ writer.unpaid_count }}</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ "%.2f"|format(writer.total_amount) }}</td>
+<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+    <button onclick="confirmMarkPaid('{{ writer.id }}')" class="text-blue-600 hover:text-blue-900">Mark as Paid</button>
+</td>
+{% endblock %}
+
+{% block modals %}
+<!-- Mark Single Writer Paid Modal -->
+<div id="markPaidModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Mark Orders as Paid</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500">Are you sure you want to mark all orders for this writer as paid?</p>
+            </div>
+            <div class="items-center px-4 py-3">
+                <form id="markPaidForm" method="POST">
+                    <button type="button" onclick="closeMarkPaidModal()" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 mr-2">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Mark as Paid</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mark All Paid Modal -->
+<div id="markAllPaidModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Mark All Orders as Paid</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500">Are you sure you want to mark all unpaid orders as paid?</p>
+                <p class="text-sm font-semibold mt-2">Total Amount: ${{ "%.2f"|format(total_amount) }}</p>
+            </div>
+            <div class="items-center px-4 py-3">
+                <form action="{{ url_for('main.mark_all_paid') }}" method="POST">
+                    <button type="button" onclick="closeMarkAllPaidModal()" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 mr-2">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Mark All as Paid</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmMarkPaid(writerId) {
+    const modal = document.getElementById('markPaidModal');
+    const form = document.getElementById('markPaidForm');
+    form.action = `/writers/${writerId}/mark-paid`;
+    modal.classList.remove('hidden');
+}
+
+function closeMarkPaidModal() {
+    document.getElementById('markPaidModal').classList.add('hidden');
+}
+
+function confirmMarkAllPaid() {
+    document.getElementById('markAllPaidModal').classList.remove('hidden');
+}
+
+function closeMarkAllPaidModal() {
+    document.getElementById('markAllPaidModal').classList.add('hidden');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-2xl font-bold mb-6">Create New Order</h2>
+
+    <form method="POST" class="max-w-lg" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="mb-4">
+            <label for="writer" class="block text-gray-700 font-bold mb-2">Select Writer</label>
+            <select name="writer_id" id="writer" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                <option value="">Assign Later</option>
+                {% for writer in writers %}
+                <option value="{{ writer.id }}">{{ writer.name }} ({{ writer.email }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-4">
+            <label for="title" class="block text-gray-700 font-bold mb-2">Order Title</label>
+            <input type="text" name="title" id="title" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="description" class="block text-gray-700 font-bold mb-2">Description</label>
+            <textarea name="description" id="description" rows="4" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required></textarea>
+        </div>
+
+        <div class="mb-4">
+            <label for="deadline" class="block text-gray-700 font-bold mb-2">Deadline</label>
+            <input type="datetime-local" name="deadline" id="deadline" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+        </div>
+
+        <div class="mb-4">
+            <label for="price" class="block text-gray-700 font-bold mb-2">Price</label>
+            <div class="relative">
+                <span class="absolute left-3 top-2 text-gray-600">$</span>
+                <input type="number" name="price" id="price" step="0.01" min="0" class="w-full pl-8 pr-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500" required>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label for="files" class="block text-gray-700 font-bold mb-2">Attach Files</label>
+            <input type="file" name="files" id="files" multiple class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+        </div>
+
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            Create Order
+        </button>
+    </form>
+</div>
+
+<script>
+    // Set minimum datetime-local to current time and initialize with a default value
+    const deadlineInput = document.getElementById('deadline');
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+
+    // Set minimum date to now
+    deadlineInput.min = now.toISOString().slice(0, 16);
+
+    // Set a default date 24 hours from now
+    const defaultDate = new Date(now.getTime() + (24 * 60 * 60 * 1000));
+    deadlineInput.value = defaultDate.toISOString().slice(0, 16);
+
+    // Add event listener to validate date before form submission
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const selectedDate = new Date(deadlineInput.value);
+        if (selectedDate < now) {
+            e.preventDefault();
+            alert('Please select a future date and time.');
+        }
+    });
+</script>
+{% endblock %}
