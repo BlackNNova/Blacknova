@@ -1,0 +1,20 @@
+{% extends "admin/orders/list_base.html" %}
+
+{% block row_actions %}
+<div class="space-x-2">
+    <a href="{{ url_for('main.edit_order', order_id=order.id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+    {% if order.files %}
+        {% for file in order.files %}
+        <a href="{{ url_for('main.download_file', file_id=file.id) }}" class="text-blue-600 hover:text-blue-900">
+            Download {{ file.filename }}
+        </a>
+        {% endfor %}
+    {% endif %}
+    <button onclick="showStatusModal({{ order.id }})" class="text-yellow-600 hover:text-yellow-900">Change Status</button>
+    <button onclick="showDeadlineModal({{ order.id }})" class="text-indigo-600 hover:text-indigo-900">Extend Deadline</button>
+</div>
+{% endblock %}
+
+{% block modals %}
+{{ super() }}
+{% endblock %}

@@ -1,0 +1,15 @@
+Template Navigation Fixes:
+[x] create_order.html - Fixed block name to admin_content
+[x] create_writer.html - Fixed block name to admin_content
+[x] orders/edit.html - Already using correct template inheritance
+[x] orders/unclaimed.html - Already using correct template inheritance via list_base.html
+[x] orders/in_progress.html - Already using correct template inheritance via list_base.html
+[x] orders/completed.html - Already using correct template inheritance via list_base.html
+[x] orders/revision.html - Already using correct template inheritance via list_base.html
+[x] orders/invoice.html - Already using correct template inheritance via list_base.html
+[x] orders/paid.html - Already using correct template inheritance via list_base.html
+
+Next Steps:
+- Commit changes to git
+- Create pull request
+- Update user on fixes made

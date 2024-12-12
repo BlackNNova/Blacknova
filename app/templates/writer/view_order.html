@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Order Details</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Order Information</h5>
+                    <table class="table">
+                        <tr>
+                            <th>Order #:</th>
+                            <td>{{ order.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Title:</th>
+                            <td>{{ order.title }}</td>
+                        </tr>
+                        <tr>
+                            <th>Pages:</th>
+                            <td>{{ order.pages }}</td>
+                        </tr>
+                        <tr>
+                            <th>Price:</th>
+                            <td>${{ "%.2f"|format(order.price) }}</td>
+                        </tr>
+                        <tr>
+                            <th>Deadline:</th>
+                            <td>{{ order.deadline.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                        <tr>
+                            <th>Status:</th>
+                            <td>{{ order.status|title }}</td>
+                        </tr>
+                        {% if order.summary %}
+                        <tr>
+                            <th>Summary:</th>
+                            <td>{{ order.summary }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if order.subtle_points %}
+                        <tr>
+                            <th>Important Points:</th>
+                            <td>{{ order.subtle_points|safe|replace('\n', '<br>') }}</td>
+                        </tr>
+                        {% endif %}
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h5>Files</h5>
+                    {% if order.files %}
+                        <ul class="list-group">
+                        {% for file in order.files %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ file.filename }}
+                                <a href="{{ url_for('main.download_file', file_id=file.id) }}" class="btn btn-sm btn-secondary">Download</a>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No files attached to this order.</p>
+                    {% endif %}
+
+                    {% if order.status in ['unclaimed', 'in_progress', 'revision'] %}
+                        <div class="mt-4">
+                            <h5>Submit Work</h5>
+                            <form action="{{ url_for('main.submit_work', order_id=order.id) }}" method="post" enctype="multipart/form-data">
+                                {{ form.csrf_token }}
+                                <div class="mb-3">
+                                    <label for="file" class="form-label">Upload File</label>
+                                    <input type="file" class="form-control" id="file" name="file" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary" onclick="return confirm('Are you sure you want to submit this work? This action cannot be undone.')">
+                                    Submit Work
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+{% endblock %}

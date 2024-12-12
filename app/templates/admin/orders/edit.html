@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+
+{% block admin_content %}
+<div class="container mx-auto px-4 py-8">
+    <h2 class="text-2xl font-bold mb-6">Edit Order #{{ order.id }}</h2>
+
+    <form method="POST" action="{{ url_for('main.edit_order', order_id=order.id) }}" enctype="multipart/form-data" class="max-w-lg space-y-4">
+        {{ form.csrf_token }}
+        {{ form.hidden_tag() }}
+
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Writer</label>
+            {{ form.writer_id(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Title</label>
+            {{ form.title(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Description</label>
+            {{ form.description(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", rows=10) }}
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Deadline</label>
+            {{ form.deadline(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", type="datetime-local") }}
+        </div>
+
+        <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-bold mb-2">Price</label>
+            {{ form.price(class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline") }}
+        </div>
+
+        <div class="flex items-center justify-between">
+            {{ form.submit(class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline") }}
+            <a href="{{ url_for('main.' + order.status + '_orders') }}" class="text-blue-500 hover:text-blue-800">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
