@@ -679,14 +679,14 @@ def create_writer():
             return render_template('admin/create_writer.html', form=form)
 
         password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(12))
-
+        writer = None
         try:
             writer = User(
                 name=form.name.data,
                 email=form.email.data,
                 phone=form.phone.data,
                 role='writer',
-                confirmed=True  # Set confirmed to True for writers
+                confirmed=True
             )
             writer.set_password(password)
             db.session.add(writer)
@@ -694,24 +694,21 @@ def create_writer():
 
             try:
                 send_writer_credentials(writer.email, password)
+                flash('Writer account created successfully! Login credentials have been sent to their email.', 'success')
             except Exception as e:
                 if current_app.debug:
-                    # In development mode, just log the credentials and show success
                     print(f"\nDEVELOPMENT: Writer credentials generated:")
                     print(f"Email: {writer.email}")
                     print(f"Password: {password}")
                     print(f"Login URL: {url_for('auth.login', _external=True)}\n")
                     flash('Writer account created successfully! Check server logs for login credentials.', 'success')
                 else:
-                    # In production, rollback and show error
-                    db.session.rollback()
-                    flash('Error sending login credentials. Please try again.', 'error')
-                    return render_template('admin/create_writer.html', form=form)
+                    flash('Writer account created but error sending credentials. Please contact support.', 'warning')
 
-            flash('Writer account created successfully! Login credentials have been sent to their email.', 'success')
             return redirect(url_for('main.dashboard'))
         except Exception as e:
-            db.session.rollback()
+            if writer and writer.id:
+                db.session.rollback()
             flash('Error creating writer account. Please try again.', 'error')
             return render_template('admin/create_writer.html', form=form)
 

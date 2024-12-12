@@ -16,6 +16,13 @@
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <script>
+                toastr.options = {
+                    "preventDuplicates": true,
+                    "positionClass": "toast-top-right",
+                    "closeButton": true,
+                    "timeOut": "5000",
+                    "extendedTimeOut": "2000"
+                };
                 {% for category, message in messages %}
                     toastr.{{ category }}('{{ message }}');
                 {% endfor %}
