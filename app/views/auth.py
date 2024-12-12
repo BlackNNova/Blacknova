@@ -72,10 +72,12 @@ def confirm(token):
 def login():
     form = LoginForm()
     print(f"Request method: {request.method}")  # Debug log
-    print(f"Form data: {request.form}")  # Debug log
+    print(f"Form data: {request.form.to_dict()}")  # Debug log - use to_dict() for better visibility
     print(f"CSRF token in form: {form.csrf_token.current_token}")  # Debug log
     print(f"CSRF token in session: {session.get('csrf_token')}")  # Debug log
     print(f"Form errors before validation: {form.errors}")  # Debug log
+    print(f"Headers: {dict(request.headers)}")  # Debug log - check headers
+    print(f"Is form being submitted? {request.form}")  # Debug log
 
     if form.validate_on_submit():
         email = form.email.data

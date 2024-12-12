@@ -9,7 +9,7 @@ app = create_app()
 def create_test_data():
     with app.app_context():
         # Get existing admin user
-        admin = User.query.filter_by(email='admin@test.com').first()
+        admin = User.query.filter_by(email='admin@example.com').first()
         if not admin:
             print("Error: Admin user not found. Please run init_db.py first.")
             return

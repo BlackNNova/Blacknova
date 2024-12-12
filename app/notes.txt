@@ -1,0 +1,49 @@
+Investigation Notes:
+
+1. Writer Creation Issue:
+- Error message "Error creating writer account" is in main.py line 715
+- Error occurs in exception block that rolls back session
+- Nested try-except blocks in create_writer():
+  * Outer block: Writer creation and DB commit
+  * Inner block: Email sending
+- Development vs Production handling:
+  * Development: Shows credentials in logs
+  * Production: Rolls back on email error
+- Potential Issues:
+  * Email error triggers unnecessary rollback
+  * Success/error state inconsistent with DB state
+  * Flash messages might be duplicated
+
+2. Navigation Structure:
+- Base template hierarchy:
+  * base.html (root template with flash messages)
+  * admin/base.html (extends base.html, adds admin navigation)
+  * specific pages extend admin/base.html
+- Template Block Issues:
+  * create_order.html extends admin/base.html but uses {% block content %}
+  * Should use {% block admin_content %} to preserve navigation
+- Navigation Components:
+  * Proper navigation bar in admin/base.html
+  * Dashboard link exists but might be hidden
+  * Template inheritance chain broken by wrong block usage
+
+3. Flash Message Handling:
+- Multiple flash message displays:
+  * base.html: Uses toastr.js for notifications
+  * admin/base.html: Has additional flash message display
+- Potential Issues:
+  * Double display of messages
+  * JavaScript event handlers might duplicate notifications
+  * Toastr configuration might need adjustment
+
+4. Email Configuration:
+- Development mode:
+  * Prints credentials to logs
+  * Doesn't rollback on email error
+- Production mode:
+  * Rolls back transaction on email error
+  * Might cause inconsistent state
+- Need to verify:
+  * Mail server configuration
+  * Environment variables
+  * Development vs Production settings

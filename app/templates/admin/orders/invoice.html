@@ -65,6 +65,7 @@
             </div>
             <div class="items-center px-4 py-3">
                 <form action="{{ url_for('main.mark_all_paid') }}" method="POST">
+                    {{ mark_all_paid_form.csrf_token }}
                     <button type="button" onclick="closeMarkAllPaidModal()" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 mr-2">Cancel</button>
                     <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Mark All as Paid</button>
                 </form>

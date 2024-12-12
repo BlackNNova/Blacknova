@@ -10,7 +10,7 @@ def init_db():
         # Create admin user
         admin = User(
             name='Admin User',
-            email='admin@test.com',
+            email='admin@example.com',  # Changed from admin@test.com
             phone='123-456-7890',
             role='admin',
             confirmation_token_used=True,

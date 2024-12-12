@@ -26,4 +26,11 @@ def send_writer_credentials(email, password):
                              password=password,
                              login_url=login_url)
 
+    # Log credentials in development mode
+    if current_app.debug:  # Changed from FLASK_ENV check to debug flag
+        print(f"\nDEVELOPMENT: Writer credentials generated:")
+        print(f"Email: {email}")
+        print(f"Password: {password}")
+        print(f"Login URL: {login_url}\n")
+
     mail.send(msg)

@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Writer Dashboard</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <p class="mb-0">Welcome, {{ current_user.name }}!</p>
+        <a href="{{ url_for('main.profile') }}" class="btn btn-primary">Profile Settings</a>
+    </div>
+
+    <!-- Available Orders Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Available Orders</h2>
+        </div>
+        <div class="card-body">
+            {% if available_orders %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Title</th>
+                                <th>Pages</th>
+                                <th>Deadline</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in available_orders %}
+                                <tr {% if order.status == 'revision' %}class="table-warning"{% endif %}>
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.title }}</td>
+                                    <td>{{ order.pages }}</td>
+                                    <td>{{ order.deadline.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ order.status|title }}</td>
+                                    <td>
+                                        <a href="{{ url_for('main.view_order', order_id=order.id) }}" class="btn btn-sm btn-primary">View Details</a>
+                                        {% if order.files %}
+                                            <a href="{{ url_for('main.download_file', file_id=order.files[0].id) }}" class="btn btn-sm btn-secondary">Download File</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">No available orders at this time.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Orders Pending Approval Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Orders Pending Approval</h2>
+        </div>
+        <div class="card-body">
+            {% if pending_orders %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Title</th>
+                                <th>Pages</th>
+                                <th>Price</th>
+                                <th>Submitted On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in pending_orders %}
+                                <tr>
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.title }}</td>
+                                    <td>{{ order.pages }}</td>
+                                    <td>${{ "%.2f"|format(order.price) }}</td>
+                                    <td>{{ order.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">No orders pending approval.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Invoice/Approved Orders Section -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="h5 mb-0">Invoice/Approved Orders</h2>
+            <div class="total-amount">
+                Total: ${{ "%.2f"|format(approved_total) }}
+            </div>
+        </div>
+        <div class="card-body">
+            {% if approved_orders %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Title</th>
+                                <th>Pages</th>
+                                <th>Price</th>
+                                <th>Approved On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in approved_orders %}
+                                <tr>
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.title }}</td>
+                                    <td>{{ order.pages }}</td>
+                                    <td>${{ "%.2f"|format(order.price) }}</td>
+                                    <td>{{ order.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">No approved orders.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Paid Orders Section -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="h5 mb-0">Paid Orders</h2>
+            <div class="total-amount">
+                Total Paid: ${{ "%.2f"|format(paid_total) }}
+            </div>
+        </div>
+        <div class="card-body">
+            {% if paid_orders %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Order #</th>
+                                <th>Title</th>
+                                <th>Pages</th>
+                                <th>Amount</th>
+                                <th>Paid On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in paid_orders %}
+                                <tr>
+                                    <td>{{ order.id }}</td>
+                                    <td>{{ order.title }}</td>
+                                    <td>{{ order.pages }}</td>
+                                    <td>${{ "%.2f"|format(order.price) }}</td>
+                                    <td>{{ order.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">No paid orders.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
